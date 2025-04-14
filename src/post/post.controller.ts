@@ -27,11 +27,13 @@ export class PostController {
         return this.postService.createPost(createPostDto, req.user.sub);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Delete(':id')
     async removePost(@Param('id') id: string): Promise<IPost> {
         return this.postService.removePost(+id);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Put(':id')
     async update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto): Promise<IPost> {
        return  this.postService.updatePost(+id, updatePostDto);

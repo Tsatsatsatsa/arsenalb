@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { IPost } from './post.intrerface';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { Commentary } from 'src/commentary/commentary';
 
 @Injectable()
 export class PostService {
@@ -24,10 +23,8 @@ export class PostService {
         });
     }
 
-
     async createPost(createPostDto: CreatePostDto, userId: number): Promise<IPost> {
         const newPost = await this.postRepository.create({ ...createPostDto, user: { id: userId } });
-        console.log(newPost,'newPost')
         return this.postRepository.save(newPost)
     }
 

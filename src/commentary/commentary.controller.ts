@@ -22,7 +22,6 @@ export class CommentaryController {
     @UseGuards(JwtAuthGuard)
     @Put(':id')
     updateCommentary(@Param('id') id: string, @Body() updateCommentaryDto: UpdateCommentaryDto) {
-        console.log(id, updateCommentaryDto)
     }
 
     @Get(':id')
