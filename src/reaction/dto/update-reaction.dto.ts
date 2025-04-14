@@ -1,14 +1,10 @@
 import { IsEnum, IsNotEmpty, IsNumber } from "class-validator";
 import { ReactionType } from "../reaction";
 
-export class CreateReactionDto {
-    
+export class UpdateReactionDto {
+
     @IsEnum(ReactionType)
     @IsNotEmpty()
-    type:ReactionType;
-  
-    @IsNumber()
-    @IsNotEmpty()
-    commentaryId: number;
+    type: ReactionType;
 
 }

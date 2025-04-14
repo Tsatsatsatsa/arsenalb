@@ -1,10 +1,12 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards, Headers } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { CommentaryService } from './commentary.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
-import { CreateCommentaryDto } from './dto/create-commentary.dto';
 import { Request } from "express";
 import { Commentary } from './commentary';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
+import { CreateCommentaryDto } from './dto/create-commentary.dto';
+import { UpdateCommentaryDto } from './dto/update-commentary.dto';
+
 
 @Controller('commentary')
 export class CommentaryController {
@@ -15,6 +17,12 @@ export class CommentaryController {
     @Post()
     createCommentary(@Body() createCommentaryDto: CreateCommentaryDto, @Req() req: Request): Promise<Commentary> {
         return this.commentaryService.create(createCommentaryDto, +req.user.sub)
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Put(':id')
+    updateCommentary(@Param('id') id: string, @Body() updateCommentaryDto: UpdateCommentaryDto) {
+        console.log(id, updateCommentaryDto)
     }
 
     @Get(':id')

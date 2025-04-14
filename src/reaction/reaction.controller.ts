@@ -1,8 +1,10 @@
 import { Body, Controller, Delete, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { ReactionService } from './reaction.service';
+import { Request } from 'express'
 import { CreateReactionDto } from './dto/create-reaction.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
 import { Reaction } from './reaction';
+import { UpdateReactionDto } from './dto/update-reaction.dto';
 
 @Controller('reaction')
 export class ReactionController {
@@ -11,20 +13,20 @@ export class ReactionController {
 
     @UseGuards(JwtAuthGuard)
     @Post()
-    async crateMessage(@Body() createReactionDto: CreateReactionDto, @Req() req: any): Promise<Reaction> {
-        return this.reactionService.create(createReactionDto, req.user.sub)
+    async createReaction(@Body() createReactionDto: CreateReactionDto, @Req() req: Request): Promise<Reaction> {
+        return this.reactionService.createReaction(createReactionDto, +req.user.sub)
     }
 
     @UseGuards(JwtAuthGuard)
-    @Put()
-    async updateMessage(@Body() createReactionDto: CreateReactionDto, @Req() req: any): Promise<Reaction> {
-        return this.reactionService.update(createReactionDto, req.user.sub)
+    @Put(':commentaryId')
+    async updateReaction(@Param('commentaryId') id: string, @Body() updateReactionDto: UpdateReactionDto, @Req() req: Request): Promise<Reaction> {
+        return this.reactionService.updateReaction(+id, updateReactionDto, +req.user.sub)
     }
 
     @UseGuards(JwtAuthGuard)
     @Delete(':commentaryId')
-    async deleteMessage(@Param('commentaryId') id: string, @Req() req: any): Promise<Reaction> {
-        return this.reactionService.delete(+id, req.user.sub)
+    async deleteReaction(@Param('commentaryId') id: string, @Req() req: Request): Promise<Reaction> {
+        return this.reactionService.deleteReaction(+id, +req.user.sub)
     }
 
 

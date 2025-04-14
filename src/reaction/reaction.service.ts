@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Reaction } from './reaction';
 import { Repository } from 'typeorm';
 import { CreateReactionDto } from './dto/create-reaction.dto';
+import { UpdateReactionDto } from './dto/update-reaction.dto';
 
 @Injectable()
 export class ReactionService {
@@ -12,7 +13,7 @@ export class ReactionService {
     ) { }
 
 
-    async create(createReactionDto: CreateReactionDto, userId: number): Promise<Reaction> {
+    async createReaction(createReactionDto: CreateReactionDto, userId: number): Promise<Reaction> {
         const { type, commentaryId } = createReactionDto;
 
         const newReaction = await this.reactionRepository.create(
@@ -24,17 +25,17 @@ export class ReactionService {
     }
 
 
-    async update(createReactionDto: CreateReactionDto, userId: number): Promise<Reaction> {
-        const reaction = await this.findReaction(createReactionDto.commentaryId, userId)
+    async updateReaction(commentaryId: number, updateReactionDto: UpdateReactionDto, userId: number): Promise<Reaction> {
+        const reaction = await this.findReaction(commentaryId, userId)
 
-        reaction.type = createReactionDto.type;
+        reaction.type = updateReactionDto.type;
         return this.reactionRepository.save(reaction);
 
 
     }
 
 
-    async delete(commentarytId: number, userId: number): Promise<Reaction> {
+    async deleteReaction(commentarytId: number, userId: number): Promise<Reaction> {
         const reaction = await this.findReaction(commentarytId, userId)
 
         return this.reactionRepository.remove(reaction)
