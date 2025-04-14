@@ -12,24 +12,29 @@ import { SignInDto } from 'src/auth/dto/signIn.dto';
 export class UserService {
     constructor(
         @InjectRepository(User)
-        private userRepsitory: Repository<User>
+        private userRepository: Repository<User>
     ) { }
 
-    async registerUser(createUserDto: CreateUserDto) {
-        delete createUserDto.confirmPassword;
-        const existingUser = await this.userRepsitory.findOne(
-            {
-                where:
-                    { email: createUserDto.email, userName: createUserDto.userName }
-            });
+    async registerUser(createUserDto: CreateUserDto): Promise<{ statusCode: number; error?: string, message: string }> {
+        const { confirmPassword, ...userData } = createUserDto;
+
+        const existingUser = await this.userRepository.findOne({
+            where: [
+                { email: userData.email },
+                { userName: userData.userName }
+            ]
+        });
+
+
 
         if (existingUser) {
             throw new ConflictException('User already exists');
+
         }
 
 
-        createUserDto.password = await bcrypt.hash(createUserDto.password, 10);
-        this.userRepsitory.save(createUserDto);
+        userData.password = await bcrypt.hash(userData.password, 10);
+        this.userRepository.save(userData);
 
         return {
             statusCode: HttpStatus.CREATED,
@@ -39,7 +44,7 @@ export class UserService {
 
 
     async findUser(signInDto: SignInDto) {
-        return await this.userRepsitory.findOne(
+        return await this.userRepository.findOne(
             {
                 where:
                     { email: signInDto.email }
