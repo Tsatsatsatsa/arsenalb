@@ -3,6 +3,6 @@ import { UserPayload } from 'src/auth/interfaces/user-payload.interface';
 
 declare module 'express' {
   export interface Request {
-    user: any; 
+    user: UserPayload; 
   }
 }

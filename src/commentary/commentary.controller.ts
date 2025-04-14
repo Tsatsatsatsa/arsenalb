@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, UseGuards, Headers } from '@nestjs/common';
 import { CommentaryService } from './commentary.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
-import { ICommentary } from './commentary.interface';
 import { CreateCommentaryDto } from './dto/create-commentary.dto';
+import { Request } from "express";
 import { Commentary } from './commentary';
+import { CurrentUser } from 'src/decorators/current-user.decorator';
 
 @Controller('commentary')
 export class CommentaryController {
@@ -12,13 +13,12 @@ export class CommentaryController {
 
     @UseGuards(JwtAuthGuard)
     @Post()
-    createCommentary(@Body() createCommentaryDto: CreateCommentaryDto, @Req() req: any): Promise<Commentary> { 
-        return this.commentaryService.create(createCommentaryDto, req.user.sub)
+    createCommentary(@Body() createCommentaryDto: CreateCommentaryDto, @Req() req: Request): Promise<Commentary> {
+        return this.commentaryService.create(createCommentaryDto, +req.user.sub)
     }
 
-    @UseGuards(JwtAuthGuard)
     @Get(':id')
-    getCommentariesByPostId(@Param('id') id:string, @Req() req?:any) {
-        return this.commentaryService.getCommentariesByPostId(+id, req?.user?.sub)
+    getCommentariesByPostId(@Param('id') id: string, @CurrentUser() userId: number | null) {
+        return this.commentaryService.getCommentariesByPostId(+id, userId)
     }
 }

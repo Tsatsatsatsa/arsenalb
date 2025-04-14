@@ -15,7 +15,7 @@ export class UserService {
         private userRepository: Repository<User>
     ) { }
 
-    async findUserByEmailAndUsername(signUpDto: SignUpDto): Promise<{ id: number, userName: string, password: string, email: string } | null> {
+    async findUserByEmailAndUsername(signUpDto: SignUpDto): Promise<User> {
         return await this.userRepository.findOne({
             where: [
                 { email: signUpDto.email },
@@ -25,9 +25,7 @@ export class UserService {
 
     }
 
-
-
-    async findUserByEmail(signInDto: SignInDto): Promise<{ id: number, userName: string, password: string, email: string } | null> {
+    async findUserByEmail(signInDto: SignInDto): Promise<User> {
         return await this.userRepository.findOne(
             {
                 where:
@@ -35,7 +33,6 @@ export class UserService {
             });
 
     }
-
 
     async createUser(signUpDto: SignUpDto): Promise<{ statusCode: number; message: string }> {
         signUpDto.password = await bcrypt.hash(signUpDto.password, 10);
