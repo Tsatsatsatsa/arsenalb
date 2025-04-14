@@ -1,11 +1,11 @@
-import { ConflictException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 import { User } from './user';
-import { CreateUserDto } from './dto/create-user.dto';
 import { SignInDto } from 'src/auth/dto/signIn.dto';
+import { SignUpDto } from 'src/auth/dto/signUp.dto';
 
 
 @Injectable()
@@ -15,40 +15,36 @@ export class UserService {
         private userRepository: Repository<User>
     ) { }
 
-    async registerUser(createUserDto: CreateUserDto): Promise<{ statusCode: number; error?: string, message: string }> {
-        const { confirmPassword, ...userData } = createUserDto;
-
-        const existingUser = await this.userRepository.findOne({
+    async findUserByEmailAndUsername(signUpDto: SignUpDto): Promise<{ id: number, userName: string, password: string, email: string } | null> {
+        return await this.userRepository.findOne({
             where: [
-                { email: userData.email },
-                { userName: userData.userName }
+                { email: signUpDto.email },
+                { userName: signUpDto.userName }
             ]
         });
 
-
-
-        if (existingUser) {
-            throw new ConflictException('User already exists');
-
-        }
-
-
-        userData.password = await bcrypt.hash(userData.password, 10);
-        this.userRepository.save(userData);
-
-        return {
-            statusCode: HttpStatus.CREATED,
-            message: 'User registered successfully',
-        };
     }
 
 
-    async findUser(signInDto: SignInDto) {
+
+    async findUserByEmail(signInDto: SignInDto): Promise<{ id: number, userName: string, password: string, email: string } | null> {
         return await this.userRepository.findOne(
             {
                 where:
                     { email: signInDto.email }
             });
+
+    }
+
+
+    async createUser(signUpDto: SignUpDto): Promise<{ statusCode: number; message: string }> {
+        signUpDto.password = await bcrypt.hash(signUpDto.password, 10);
+        this.userRepository.save(signUpDto);
+
+        return {
+            statusCode: HttpStatus.CREATED,
+            message: 'User registered successfully',
+        };
     }
 
 
