@@ -15,7 +15,7 @@ export class AuthService {
         const user = await this.userService.findUserByEmail(signInDto);
         const match = await bcrypt.compare(signInDto.password, user.password);
 
-        if (!user && !match) {
+        if (!user || !match) {
             throw new ConflictException('Invalid email or password, please try again.');
         }
 
