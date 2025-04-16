@@ -11,6 +11,9 @@ import { CommentaryModule } from './commentary/commentary.module';
 import { Commentary } from './commentary/commentary';
 import { ReactionModule } from './reaction/reaction.module';
 import { Reaction } from './reaction/reaction';
+import { NotificationController } from './notification/notification.controller';
+import { NotificationModule } from './notification/notification.module';
+import { Notification } from './notification/notification';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -20,10 +23,10 @@ import { Reaction } from './reaction/reaction';
     username: 'root',
     password: 'Tsatsa18111985',
     database: 'arsenaldb',
-    entities: [Post, User, Commentary,Reaction],
+    entities: [Post, User, Commentary, Reaction, Notification],
     synchronize: true,
-  }), PostModule, UserModule, AuthModule, CommentaryModule, ReactionModule],
-  controllers: [AppController],
+  }), PostModule, UserModule, AuthModule, CommentaryModule, ReactionModule, NotificationModule],
+  controllers: [AppController, NotificationController],
   providers: [AppService],
 })
 export class AppModule { }
