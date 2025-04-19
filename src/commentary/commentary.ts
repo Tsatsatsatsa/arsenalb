@@ -38,4 +38,5 @@ export class Commentary {
 
     @OneToMany(() => Notification, notification => notification.commentary)
     notifications: Notification[];
+ 
 }

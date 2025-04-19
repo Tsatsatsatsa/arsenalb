@@ -14,13 +14,13 @@ export class CommentaryService {
     ) { }
 
     async create(createCommentaryDto: CreateCommentaryDto, userId: number): Promise<Commentary> {
-        const { commentary, postId, parentCommentaryId } = createCommentaryDto;
+        const { commentary, postId, parentCommentaryId, parentCommentaryUserId } = createCommentaryDto;
 
         const comment = await this.commentaryRepository.create({ commentary, user: { id: userId }, post: { id: postId }, parentCommentary: { id: parentCommentaryId } })
         const savedComment = await this.commentaryRepository.save(comment)
 
         if (savedComment.parentCommentary) {
-            this.notificationService.createNotification(savedComment.id, userId)
+            this.notificationService.createNotification(savedComment.id,parentCommentaryUserId, userId)
         }
 
         return savedComment
@@ -42,6 +42,7 @@ export class CommentaryService {
                     id: true
                 },
                 user: {
+                    id: true,
                     userName: true
                 },
                 reactions: {

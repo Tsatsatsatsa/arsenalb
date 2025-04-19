@@ -31,4 +31,7 @@ export class User {
 
     @OneToMany(() => Notification, notification => notification.user)
     notifications: Notification[]
+
+    @OneToMany(() => Notification, notification => notification.parentCommentaryUser)
+    parentCommentaryUsers: Notification[];
 }

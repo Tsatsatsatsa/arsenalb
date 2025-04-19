@@ -10,30 +10,30 @@ export class NotificationService {
         private notificationRepository: Repository<Notification>
     ) { }
 
-    async createNotification(commentaryId: number, userId: number): Promise<void> {
-        const notification = await this.notificationRepository.create({ user: { id: userId }, commentary: { id: commentaryId } });
+    async createNotification(commentaryId: number, parentCommentaryUserId: number, userId: number): Promise<void> {
+        const notification = await this.notificationRepository.create({
+            user: { id: userId },
+            commentary: { id: commentaryId },
+            parentCommentaryUser: { id: parentCommentaryUserId }
+        });
         this.notificationRepository.save(notification)
     }
 
 
-    async getNotifications(userId: number): Promise<Notification[]> {
-        const notification = await this.notificationRepository.find({
-            where: { commentary: { parentCommentary: { user: { id: userId } } } },
-            relations: [
-                'commentary',
-                'user',
-            ],
+    async getNotifications(userId: number) {
+        return await this.notificationRepository.find({
+            where: { parentCommentaryUser: { id: userId } },
+            relations: ['commentary', 'user'],
             select: {
                 commentary: {
                     commentary: true
                 },
                 user: {
-                    id: true,
                     userName: true
                 }
             }
+
         })
 
-        return notification.filter(notification => notification.user.id !== userId);
     }
 }
