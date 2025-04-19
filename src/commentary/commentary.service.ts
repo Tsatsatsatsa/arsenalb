@@ -19,7 +19,7 @@ export class CommentaryService {
         const comment = await this.commentaryRepository.create({ commentary, user: { id: userId }, post: { id: postId }, parentCommentary: { id: parentCommentaryId } })
         const savedComment = await this.commentaryRepository.save(comment)
 
-        if (savedComment.parentCommentary) {
+        if (savedComment.parentCommentary && parentCommentaryUserId !== userId) {
             this.notificationService.createNotification(savedComment.id,parentCommentaryUserId, userId)
         }
 

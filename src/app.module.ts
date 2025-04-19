@@ -13,7 +13,7 @@ import { ReactionModule } from './reaction/reaction.module';
 import { Reaction } from './reaction/reaction';
 import { NotificationController } from './notification/notification.controller';
 import { NotificationModule } from './notification/notification.module';
-import { Notification } from './notification/notification';
+import { CommentaryNotification } from './notification/entity/commentary-notification';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -23,7 +23,7 @@ import { Notification } from './notification/notification';
     username: 'root',
     password: 'Tsatsa18111985',
     database: 'arsenaldb',
-    entities: [Post, User, Commentary, Reaction, Notification],
+    entities: [Post, User, Commentary, Reaction, CommentaryNotification],
     synchronize: true,
   }), PostModule, UserModule, AuthModule, CommentaryModule, ReactionModule, NotificationModule],
   controllers: [AppController, NotificationController],

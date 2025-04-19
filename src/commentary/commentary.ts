@@ -1,4 +1,4 @@
-import { Notification } from "src/notification/notification";
+import { CommentaryNotification} from "src/notification/entity/commentary-notification";
 import { Post } from "src/post/post";
 import { Reaction } from "src/reaction/reaction";
 import { User } from "src/user/user";
@@ -36,7 +36,7 @@ export class Commentary {
     @OneToMany(() => Reaction, reaction => reaction.commentary)
     reactions: Reaction[];
 
-    @OneToMany(() => Notification, notification => notification.commentary)
-    notifications: Notification[];
+    @OneToMany(() => CommentaryNotification, notification => notification.commentary)
+    notifications: CommentaryNotification[];
  
 }

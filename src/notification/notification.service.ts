@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Notification } from './notification';
+import { CommentaryNotification } from './entity/commentary-notification';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class NotificationService {
     constructor(
-        @InjectRepository(Notification)
-        private notificationRepository: Repository<Notification>
+        @InjectRepository(CommentaryNotification)
+        private notificationRepository: Repository<CommentaryNotification>
     ) { }
 
     async createNotification(commentaryId: number, parentCommentaryUserId: number, userId: number): Promise<void> {
@@ -20,9 +20,9 @@ export class NotificationService {
     }
 
 
-    async getNotifications(userId: number) {
+    async getNotifications(userId: number): Promise<CommentaryNotification[]> {
         return await this.notificationRepository.find({
-            where: { parentCommentaryUser: { id: userId } },
+            where: { parentCommentaryUser: { id: userId }, isRead: false },
             relations: ['commentary', 'user'],
             select: {
                 commentary: {

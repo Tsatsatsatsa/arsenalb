@@ -5,7 +5,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity()
-export class Notification {
+export class CommentaryNotification {
     @PrimaryGeneratedColumn()
     id: number;
 
