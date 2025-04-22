@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { Request } from "express";
 import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
@@ -10,13 +10,14 @@ export class NotificationController {
 
     @UseGuards(JwtAuthGuard)
     @Get()
-    async getNotifications(@Req() req: Request): Promise<CommentaryNotification[]> {
-        return this.notificationService.getNotifications(+req.user.sub);
+    async getNotifications(@Req() req: Request, @Query('page') page: number = 1, @Query('limit') limit: number = 5)
+        : Promise<{ data: CommentaryNotification[], meta: { total: number, page: number, last_page: number } }> {
+        return this.notificationService.getNotifications(+req.user.sub, page, limit);
     }
 
     @UseGuards(JwtAuthGuard)
-    @Put()
-    async updateNotification(@Body() notificationsId: number[]): Promise<{ statusCode: number; message: string }> {
-        return this.notificationService.updateNotifications(notificationsId)
+    @Get('total')
+    async getUnreadNotificationsTotal(@Req() req: Request): Promise<number> {
+        return this.notificationService.getUnreadNotificationsTotal(+req.user.sub);
     }
 }

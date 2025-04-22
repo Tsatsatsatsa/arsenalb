@@ -1,6 +1,6 @@
 import { Commentary } from "src/commentary/commentary";
 import { User } from "src/user/user";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 
 
@@ -11,6 +11,12 @@ export class CommentaryNotification {
 
     @Column({ default: false })
     isRead: boolean;
+
+    @CreateDateColumn({ type: 'timestamp' })
+    createdAt: Date;
+
+    @UpdateDateColumn({ type: 'timestamp' })
+    updatedAt: Date;
 
     @ManyToOne(() => Commentary, commentary => commentary.notifications)
     commentary: Commentary;
