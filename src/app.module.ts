@@ -14,6 +14,8 @@ import { Reaction } from './reaction/reaction';
 import { NotificationController } from './notification/notification.controller';
 import { NotificationModule } from './notification/notification.module';
 import { CommentaryNotification } from './notification/entity/commentary-notification';
+import { TagController } from './tag/tag.controller';
+import { TagModule } from './tag/tag.module';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -25,8 +27,8 @@ import { CommentaryNotification } from './notification/entity/commentary-notific
     database: 'arsenaldb',
     entities: [Post, User, Commentary, Reaction, CommentaryNotification],
     synchronize: true,
-  }), PostModule, UserModule, AuthModule, CommentaryModule, ReactionModule, NotificationModule],
-  controllers: [AppController, NotificationController],
+  }), PostModule, UserModule, AuthModule, CommentaryModule, ReactionModule, NotificationModule, TagModule],
+  controllers: [AppController, NotificationController, TagController],
   providers: [AppService],
 })
 export class AppModule { }
