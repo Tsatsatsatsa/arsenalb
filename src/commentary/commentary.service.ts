@@ -3,18 +3,27 @@ import { Commentary } from './commentary';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCommentaryDto } from './dto/create-commentary.dto';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class CommentaryService {
     constructor(
         @InjectRepository(Commentary)
-        private commentaryRepository: Repository<Commentary>
+        private commentaryRepository: Repository<Commentary>,
+        private notificationService: NotificationService
     ) { }
 
     async create(createCommentaryDto: CreateCommentaryDto, userId: number): Promise<Commentary> {
-        const { commentary, postId, parentCommentaryId } = createCommentaryDto;
+        const { commentary, postId, parentCommentaryId, parentCommentaryUserId } = createCommentaryDto;
+
         const comment = await this.commentaryRepository.create({ commentary, user: { id: userId }, post: { id: postId }, parentCommentary: { id: parentCommentaryId } })
-        return this.commentaryRepository.save(comment)
+        const savedComment = await this.commentaryRepository.save(comment)
+
+        if (savedComment.parentCommentary && parentCommentaryUserId !== userId) {
+            this.notificationService.createNotification(savedComment.id,parentCommentaryUserId, userId)
+        }
+
+        return savedComment
     }
 
     async getCommentariesByPostId(postId: number, userId?: number): Promise<any> {
@@ -33,6 +42,7 @@ export class CommentaryService {
                     id: true
                 },
                 user: {
+                    id: true,
                     userName: true
                 },
                 reactions: {

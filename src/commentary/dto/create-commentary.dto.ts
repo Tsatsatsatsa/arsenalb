@@ -1,10 +1,6 @@
-
-
-
 import { IsString, IsNotEmpty, IsOptional, IsNumber } from 'class-validator';
 
 export class CreateCommentaryDto {
-
   
   @IsString()
   @IsNotEmpty()
@@ -13,6 +9,10 @@ export class CreateCommentaryDto {
   @IsNumber()
   @IsNotEmpty()
   postId: number;
+
+  @IsNumber()
+  @IsOptional()
+  parentCommentaryUserId: number;
 
   @IsNumber()
   @IsOptional()

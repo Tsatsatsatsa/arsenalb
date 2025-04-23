@@ -1,4 +1,5 @@
 import { Commentary } from "src/commentary/commentary";
+import { CommentaryNotification } from "src/notification/entity/commentary-notification";
 import { Post } from "src/post/post";
 import { Reaction } from "src/reaction/reaction";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
@@ -28,4 +29,9 @@ export class User {
     @OneToMany(() => Reaction, reaction => reaction.user)
     reactions: Reaction[]
 
+    @OneToMany(() => CommentaryNotification, notification => notification.user)
+    notifications: CommentaryNotification[]
+
+    @OneToMany(() => CommentaryNotification, notification => notification.parentCommentaryUser)
+    parentCommentaryUsers: CommentaryNotification[];
 }
