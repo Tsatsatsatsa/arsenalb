@@ -46,7 +46,7 @@ export class NotificationService {
             data: items,
             meta: {
                 total,
-                page,
+                page: +page,
                 last_page: Math.ceil(total / limit)
             }
         }
@@ -54,9 +54,8 @@ export class NotificationService {
     }
 
     async getUnreadNotificationsTotal(userId: number): Promise<number> {
-        const result = await this.notificationRepository.find({
+        return await this.notificationRepository.count({
             where: { parentCommentaryUser: { id: userId }, isRead: false },
         })
-        return result.length
     }
 }
