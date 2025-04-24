@@ -11,11 +11,10 @@ import { CommentaryModule } from './commentary/commentary.module';
 import { Commentary } from './commentary/commentary';
 import { ReactionModule } from './reaction/reaction.module';
 import { Reaction } from './reaction/reaction';
-import { NotificationController } from './notification/notification.controller';
 import { NotificationModule } from './notification/notification.module';
 import { CommentaryNotification } from './notification/entity/commentary-notification';
-import { TagController } from './tag/tag.controller';
 import { TagModule } from './tag/tag.module';
+import { PostTag } from './tag/entity/post-tag';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -25,10 +24,10 @@ import { TagModule } from './tag/tag.module';
     username: 'root',
     password: 'Tsatsa18111985',
     database: 'arsenaldb',
-    entities: [Post, User, Commentary, Reaction, CommentaryNotification],
+    entities: [Post, User, Commentary, Reaction, CommentaryNotification,PostTag],
     synchronize: true,
   }), PostModule, UserModule, AuthModule, CommentaryModule, ReactionModule, NotificationModule, TagModule],
-  controllers: [AppController, NotificationController, TagController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule { }
