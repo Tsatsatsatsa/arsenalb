@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Post } from "src/post/post";
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
 
@@ -10,4 +11,7 @@ export class PostTag {
 
     @Column()
     title: string;
+
+    @ManyToMany(() => Post, post => post.tags)
+    posts: Post[]
 }

@@ -1,7 +1,8 @@
 import { Commentary } from "src/commentary/commentary";
 import { Reaction } from "src/reaction/reaction";
+import { PostTag } from "src/tag/entity/post-tag";
 import { User } from "src/user/user";
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 
 
@@ -37,4 +38,7 @@ export class Post {
     @ManyToOne(() => User, user => user.posts)
     user: User;
 
+    @ManyToMany(() => PostTag, tag => tag.posts)
+    @JoinTable()
+    tags: PostTag[]
 }

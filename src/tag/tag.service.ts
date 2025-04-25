@@ -16,4 +16,10 @@ export class TagService {
             where: { title: Like(`%${searchName}%`) }
         })
     }
+
+    async getTagByPostId(postId: number): Promise<PostTag[]> {
+        return await this.postTagRepository.find({
+            where: { posts: { id: postId } },
+        })
+    }
 }
