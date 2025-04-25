@@ -13,13 +13,14 @@ export class PostService {
         private postRepository: Repository<Post>
     ) { }
 
-    async getAllPosts(): Promise<Array<IPost>> {
+    async findAllPosts(): Promise<IPost[]> {
         return this.postRepository.find()
     }
 
-    async getPostById(id: number): Promise<Post> {
+    async findPostById(id: number): Promise<Post> {
         return await this.postRepository.findOne({
             where: { id },
+            relations: ['tags']
         });
     }
 
@@ -36,5 +37,11 @@ export class PostService {
     async updatePost(id: number, updatePostDto: UpdatePostDto): Promise<IPost> {
         const post = await this.postRepository.findOneBy({ id });
         return this.postRepository.save({ ...post, ...updatePostDto });
+    }
+
+    async findPostByTagId(tagId: number): Promise<IPost[]> {
+        return await this.postRepository.find({
+            where: { tags: { id: tagId } }
+        })
     }
 }

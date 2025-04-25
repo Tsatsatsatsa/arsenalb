@@ -8,12 +8,12 @@ export class TagController {
     constructor(private tagService: TagService) { }
 
     @Get()
-    async findTags(@Query('searchName') searchName: string): Promise<PostTag[]> {
+    async getTags(@Query('searchName') searchName: string): Promise<PostTag[]> {
         return this.tagService.findTags(searchName)
     }
 
     @Get(':id')
-    async getTagByPostId(@Param('id') postId: string): Promise<PostTag[]> {
-        return this.tagService.getTagByPostId(+postId)
+    async getTagById(@Param('id') tagId: string): Promise<PostTag> {
+        return this.tagService.findTagById(+tagId)
     }
 }

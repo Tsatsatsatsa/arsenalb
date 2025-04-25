@@ -11,13 +11,18 @@ export class PostController {
 
 
     @Get()
-    async getAll(): Promise<Array<IPost>> {
-        return this.postService.getAllPosts();
+    async getAll(): Promise<IPost[]> {
+        return this.postService.findAllPosts();
     }
 
     @Get(':id')
     async getPostById(@Param('id') id: string): Promise<IPost> {
-        return  this.postService.getPostById(+id)
+        return this.postService.findPostById(+id)
+    }
+
+    @Get('tag/:id')
+    async getPostByTagId(@Param('id') tagId: string): Promise<IPost[]> {
+        return this.postService.findPostByTagId(+tagId);
     }
 
 
@@ -36,7 +41,7 @@ export class PostController {
     @UseGuards(JwtAuthGuard)
     @Put(':id')
     async update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto): Promise<IPost> {
-       return  this.postService.updatePost(+id, updatePostDto);
+        return this.postService.updatePost(+id, updatePostDto);
     }
 
 

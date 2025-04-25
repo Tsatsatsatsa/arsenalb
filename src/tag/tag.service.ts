@@ -17,9 +17,9 @@ export class TagService {
         })
     }
 
-    async getTagByPostId(postId: number): Promise<PostTag[]> {
-        return await this.postTagRepository.find({
-            where: { posts: { id: postId } },
+    async findTagById(tagId: number): Promise<PostTag> {
+        return this.postTagRepository.findOne({
+            where: { id: tagId }
         })
     }
 }
