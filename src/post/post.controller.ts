@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { PostService } from './post.service';
 import { IPost } from './post.intrerface';
@@ -9,6 +9,10 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
 export class PostController {
     constructor(private postService: PostService) { }
 
+    @Get('similar')
+    async getSimilarPosts(@Query('tagIds') tagIds: number[]): Promise<IPost[]> {
+        return this.postService.findSimilarPostsByTag(tagIds)
+    }
 
     @Get()
     async getAll(): Promise<IPost[]> {
@@ -21,8 +25,8 @@ export class PostController {
     }
 
     @Get('tag/:id')
-    async getPostByTagId(@Param('id') tagId: string): Promise<IPost[]> {
-        return this.postService.findPostByTagId(+tagId);
+    async getPostsByTagId(@Param('id') tagId: string): Promise<IPost[]> {
+        return this.postService.findPostsByTagId(+tagId);
     }
 
 
@@ -43,7 +47,5 @@ export class PostController {
     async update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto): Promise<IPost> {
         return this.postService.updatePost(+id, updatePostDto);
     }
-
-
 
 }

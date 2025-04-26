@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './post';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { IPost } from './post.intrerface';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -39,9 +39,17 @@ export class PostService {
         return this.postRepository.save({ ...post, ...updatePostDto });
     }
 
-    async findPostByTagId(tagId: number): Promise<IPost[]> {
+    async findPostsByTagId(tagId: number): Promise<IPost[]> {
         return await this.postRepository.find({
             where: { tags: { id: tagId } }
+        })
+    }
+
+    async findSimilarPostsByTag(tagIds: number[]): Promise<IPost[]> {
+        return await this.postRepository.find({
+            where: { tags: { id: In(tagIds) } },
+            order: { createdAt: 'DESC' },
+            take:5
         })
     }
 }
