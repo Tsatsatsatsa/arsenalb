@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './post';
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { IPost } from './post.intrerface';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -14,7 +14,9 @@ export class PostService {
     ) { }
 
     async findAllPosts(): Promise<IPost[]> {
-        return this.postRepository.find()
+        return this.postRepository.find({
+            order: { createdAt: 'DESC' }
+        })
     }
 
     async findPostById(id: number): Promise<Post> {
@@ -45,11 +47,42 @@ export class PostService {
         })
     }
 
-    async findSimilarPostsByTag(tagIds: number[]): Promise<IPost[]> {
-        return await this.postRepository.find({
-            where: { tags: { id: In(tagIds) } },
+    async findSimilarPostsByTag(tagIds: string, postId: number): Promise<IPost[]> {
+        const tagId = tagIds.split(',').map(el => Number(el));
+
+        const posts = await this.postRepository.find({
+            where: {
+                tags: { id: In(tagId) },
+                id: Not(postId)
+            },
             order: { createdAt: 'DESC' },
-            take:5
+            relations: ['tags']
         })
+
+        const filteredPosts: IPost[] = []
+
+        const filterTags = (posts: IPost[], index: number) => {
+            if (index === 0 || filteredPosts.length >= 5) return;
+            posts.forEach((el: IPost) => {
+                if (filteredPosts.length >= 5) return;
+                if (el.tags.length === index) {
+                    if (tagId.some(id => el.tags.some(tag => tag.id === id))) {
+                        filteredPosts.push(el)
+                    }
+                }
+            })
+
+            filterTags(posts, index - 1)
+
+
+
+        }
+
+        filterTags(posts, tagId.length)
+
+        return filteredPosts
+
     }
+
+
 }

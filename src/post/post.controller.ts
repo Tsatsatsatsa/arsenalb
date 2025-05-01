@@ -10,8 +10,8 @@ export class PostController {
     constructor(private postService: PostService) { }
 
     @Get('similar')
-    async getSimilarPosts(@Query('tagIds') tagIds: number[]): Promise<IPost[]> {
-        return this.postService.findSimilarPostsByTag(tagIds)
+    async getSimilarPosts(@Query('tagIds') tagIds: string, @Query('postId') postId: string): Promise<IPost[]> {
+        return this.postService.findSimilarPostsByTag(tagIds, +postId)
     }
 
     @Get()
