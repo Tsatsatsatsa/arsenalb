@@ -5,6 +5,8 @@ import { In, Not, Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { IPost } from './post.intrerface';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { take } from 'rxjs';
+import { get } from 'http';
 
 @Injectable()
 export class PostService {
@@ -50,37 +52,32 @@ export class PostService {
     async findSimilarPostsByTag(tagIds: string, postId: number): Promise<IPost[]> {
         const tagId = tagIds.split(',').map(el => Number(el));
 
-        const posts = await this.postRepository.find({
-            where: {
-                tags: { id: In(tagId) },
-                id: Not(postId)
-            },
-            order: { createdAt: 'DESC' },
-            relations: ['tags']
-        })
 
-        const filteredPosts: IPost[] = []
+        const findSimilarPosts = async (currentTags: number[]): Promise<IPost[]> => {
+            if (currentTags.length === 0) return
+            const posts = await this.postRepository
+                .createQueryBuilder("post")
+                .select("post")
+                .innerJoin("post.tags", "tag")
+                .where("tag.id IN (:...tagIds)", { tagIds: currentTags })
+                .andWhere("post.id != :postId", { postId })
+                .groupBy("post.id")
+                .having("COUNT(DISTINCT tag.id) = :count", { count: currentTags.length })
+                .orderBy("post.createdAt", "DESC")
+                .getMany();
 
-        const filterTags = (posts: IPost[], index: number) => {
-            if (index === 0 || filteredPosts.length >= 5) return;
-            posts.forEach((el: IPost) => {
-                if (filteredPosts.length >= 5) return;
-                if (el.tags.length === index) {
-                    if (tagId.some(id => el.tags.some(tag => tag.id === id))) {
-                        filteredPosts.push(el)
-                    }
-                }
-            })
+            if (posts.length < 5) {
+                currentTags.pop()
+                return await findSimilarPosts(currentTags)
+            }
 
-            filterTags(posts, index - 1)
+            return posts.slice(0,5);
+        };
+
+        const filteredPosts = await findSimilarPosts(tagId)
 
 
-
-        }
-
-        filterTags(posts, tagId.length)
-
-        return filteredPosts
+        return filteredPosts;
 
     }
 
