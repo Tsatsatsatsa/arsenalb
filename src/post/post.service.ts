@@ -52,32 +52,42 @@ export class PostService {
     async findSimilarPostsByTag(tagIds: string, postId: number): Promise<IPost[]> {
         const tagId = tagIds.split(',').map(el => Number(el));
 
+        let posts: IPost[] = []
 
-        const findSimilarPosts = async (currentTags: number[]): Promise<IPost[]> => {
+        const findSimilarPosts = async (currentTags: number[], excludedPostIds: number[] = []): Promise<IPost[]> => {
             if (currentTags.length === 0) return
-            const posts = await this.postRepository
+
+            const query = await this.postRepository
                 .createQueryBuilder("post")
                 .select("post")
                 .innerJoin("post.tags", "tag")
                 .where("tag.id IN (:...tagIds)", { tagIds: currentTags })
                 .andWhere("post.id != :postId", { postId })
+
+            if (excludedPostIds.length > 0) {
+                query.andWhere("post.id NOT IN (:...postIds)", { postIds: excludedPostIds })
+                    .limit(5 - excludedPostIds.length)
+
+            }
+            query
                 .groupBy("post.id")
                 .having("COUNT(DISTINCT tag.id) = :count", { count: currentTags.length })
                 .orderBy("post.createdAt", "DESC")
-                .getMany();
+
+            posts = [...posts, ...await query.getMany()]
+            excludedPostIds = posts.map(el => el.id)
+
 
             if (posts.length < 5) {
                 currentTags.pop()
-                return await findSimilarPosts(currentTags)
+                return await findSimilarPosts(currentTags, excludedPostIds)
             }
 
-            return posts.slice(0,5);
+            return posts;
         };
 
-        const filteredPosts = await findSimilarPosts(tagId)
+         return await findSimilarPosts(tagId)
 
-
-        return filteredPosts;
 
     }
 
