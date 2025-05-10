@@ -1,3 +1,4 @@
+import { PostTag } from "src/tag/entity/post-tag";
 
 
 export interface IPost {
@@ -5,6 +6,7 @@ export interface IPost {
     title: string;
     imgUrl: string;
     article: string;
+    tags?: PostTag[]
     // userID:number;
     shortDescription: string;
     createdAt: Date | string;
